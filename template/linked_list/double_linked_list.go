@@ -31,3 +31,8 @@ func InsertBefore(node *LinkedListNode, value int) *LinkedListNode {
 
 	return newNode
 }
+
+func Delete(node *LinkedListNode) {
+	node.PreNode.NextNode = node.NextNode
+	node.NextNode.PreNode = node.PreNode
+}
