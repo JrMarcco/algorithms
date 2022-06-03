@@ -2,7 +2,7 @@ package linked_list
 
 type LinkedListNode struct {
 	Value    int
-	PreNode  *LinkedListNode
+	PrevNode *LinkedListNode
 	NextNode *LinkedListNode
 }
 
@@ -10,11 +10,11 @@ type LinkedListNode struct {
 func InsertAfter(node *LinkedListNode, value int) *LinkedListNode {
 	newNode := &LinkedListNode{Value: value}
 
-	node.NextNode.PreNode = newNode
+	node.NextNode.PrevNode = newNode
 	newNode.NextNode = node.NextNode
 
 	node.NextNode = newNode
-	newNode.PreNode = node
+	newNode.PrevNode = node
 
 	return newNode
 }
@@ -23,16 +23,16 @@ func InsertAfter(node *LinkedListNode, value int) *LinkedListNode {
 func InsertBefore(node *LinkedListNode, value int) *LinkedListNode {
 	newNode := &LinkedListNode{Value: value}
 
-	node.PreNode.NextNode = newNode
-	newNode.PreNode = node.PreNode
+	node.PrevNode.NextNode = newNode
+	newNode.PrevNode = node.PrevNode
 
-	node.PreNode = newNode
+	node.PrevNode = newNode
 	newNode.NextNode = node
 
 	return newNode
 }
 
 func Delete(node *LinkedListNode) {
-	node.PreNode.NextNode = node.NextNode
-	node.NextNode.PreNode = node.PreNode
+	node.PrevNode.NextNode = node.NextNode
+	node.NextNode.PrevNode = node.PrevNode
 }
