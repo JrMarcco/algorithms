@@ -1,7 +1,6 @@
 package stack
 
 import (
-	"fmt"
 	"strconv"
 	"testing"
 )
@@ -66,9 +65,6 @@ func calculate(s string) int {
 			ops = ops[:len(ops)-1]
 		}
 		ops = append(ops, string(ch))
-
-		fmt.Println(inversePoland)
-		fmt.Println(ops)
 	}
 	if number != "" {
 		inversePoland = append(inversePoland, number)
@@ -80,8 +76,6 @@ func calculate(s string) int {
 		inversePoland = append(inversePoland, ops[len(ops)-1])
 		ops = ops[:len(ops)-1]
 	}
-
-	fmt.Println(inversePoland)
 	return calcInversePoland(inversePoland)
 }
 
