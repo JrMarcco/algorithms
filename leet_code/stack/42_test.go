@@ -14,10 +14,7 @@ func trap(heights []int) int {
 	for _, height := range heights {
 		accumulatedWidth := 0
 		for {
-			if len(rects) == 0 {
-				break
-			}
-			if rects[len(rects)-1].height >= height {
+			if len(rects) == 0 || rects[len(rects)-1].height >= height {
 				break
 			}
 			bottom := rects[len(rects)-1].height

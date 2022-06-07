@@ -16,15 +16,11 @@ func largestRectangleArea(heights []int) int {
 	for _, height := range heights {
 		accumulatedWidth := 0
 		for {
-			if len(rectangles) == 0 {
+			if len(rectangles) == 0 || rectangles[len(rectangles)-1].height < height {
 				break
 			}
-			topRectangle := rectangles[len(rectangles)-1]
-			if topRectangle.height < height {
-				break
-			}
-			accumulatedWidth += topRectangle.width
-			area := accumulatedWidth * topRectangle.height
+			accumulatedWidth += rectangles[len(rectangles)-1].width
+			area := accumulatedWidth * rectangles[len(rectangles)-1].height
 			if area > ans {
 				ans = area
 			}
