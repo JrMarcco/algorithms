@@ -1,4 +1,4 @@
-package stack
+package leet_code
 
 import "testing"
 
