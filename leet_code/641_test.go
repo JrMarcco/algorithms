@@ -15,7 +15,7 @@ type MyCircularDeque struct {
 	Tail  *element
 }
 
-func Constructor(k int) MyCircularDeque {
+func constructor(k int) MyCircularDeque {
 	head := &element{}
 	tail := &element{}
 
@@ -115,7 +115,7 @@ func (mcd *MyCircularDeque) IsFull() bool {
 }
 
 func TestDeque(t *testing.T) {
-	circularDeque := Constructor(3)
+	circularDeque := constructor(3)
 
 	t.Log(circularDeque.InsertLast(1))
 	t.Log(circularDeque.InsertLast(2))
