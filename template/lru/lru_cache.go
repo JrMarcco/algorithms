@@ -17,13 +17,10 @@ type cacheNode struct {
 }
 
 func New(capacity int) Cache {
-
 	head := &cacheNode{}
-	tail := &cacheNode{}
+	tail := &cacheNode{prev: head}
 
 	head.next = tail
-	tail.prev = head
-
 	return Cache{
 		cacheNodeMap: map[int]*cacheNode{},
 		cap:          capacity,
