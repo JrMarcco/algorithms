@@ -1,84 +1,57 @@
 package lru
 
-// Cache 使用链表存储数据，map 记录 key 对应的链表节点
-type Cache struct {
-	cacheNodeMap map[int]*cacheNode
-	cap          int
-	head         *cacheNode
-	tail         *cacheNode
+import (
+	"container/list"
+	"errors"
+)
+
+type LRU struct {
+	size      int
+	innerList *list.List
+	innerMap  map[int]*list.Element
 }
 
-// 缓存链表节点
-type cacheNode struct {
-	key  int
-	val  int
-	prev *cacheNode
-	next *cacheNode
+type entry struct {
+	key int
+	val int
 }
 
-func New(capacity int) Cache {
-	head := &cacheNode{}
-	tail := &cacheNode{prev: head}
-
-	head.next = tail
-	return Cache{
-		cacheNodeMap: map[int]*cacheNode{},
-		cap:          capacity,
-		head:         head,
-		tail:         tail,
-	}
-}
-
-func (lru *Cache) Get(key int) int {
-	if node, ok := lru.cacheNodeMap[key]; ok {
-		node.prev.next = node.next
-		node.next.prev = node.prev
-
-		// 将元素放入队尾
-		lru.mvToTail(node)
-
-		return node.val
-	}
-	return -1
-}
-
-func (lru *Cache) Put(key int, value int) {
-	if node, ok := lru.cacheNodeMap[key]; ok {
-		node.val = value
-		lru.removeCacheNode(node)
-		lru.mvToTail(node)
-		return
+func New(size int) (*LRU, error) {
+	if size <= 0 {
+		return nil, errors.New("must provide a positive size")
 	}
 
-	if len(lru.cacheNodeMap) == lru.cap {
-		// 移除头元素
-		lru.removeHead()
+	return &LRU{
+		size:      size,
+		innerList: list.New(),
+		innerMap:  make(map[int]*list.Element),
+	}, nil
+}
+
+func (lru *LRU) Get(key int) (int, bool) {
+	if e, ok := lru.innerMap[key]; ok {
+		lru.innerList.MoveToFront(e)
+		return e.Value.(*entry).val, true
+	}
+	return -1, false
+}
+
+func (lru *LRU) Put(key int, value int) bool {
+	if e, ok := lru.innerMap[key]; ok {
+		lru.innerList.MoveToFront(e)
+		e.Value.(*entry).val = value
+		return false
 	}
 
-	newNode := &cacheNode{
-		key: key,
-		val: value,
+	e := lru.innerList.PushFront(
+		&entry{key: key, val: value},
+	)
+	lru.innerMap[key] = e
+
+	if lru.innerList.Len() > lru.size {
+		delete(lru.innerMap, lru.innerList.Back().Value.(*entry).key)
+		lru.innerList.Remove(lru.innerList.Back())
+		return true
 	}
-
-	lru.mvToTail(newNode)
-	lru.cacheNodeMap[key] = newNode
-}
-
-func (lru *Cache) removeHead() {
-	delete(lru.cacheNodeMap, lru.head.next.key)
-
-	lru.removeCacheNode(lru.head.next)
-}
-
-func (lru *Cache) removeCacheNode(node *cacheNode) {
-	node.prev.next = node.next
-	node.next.prev = node.prev
-}
-
-func (lru *Cache) mvToTail(node *cacheNode) {
-	// 当前元素移到队尾
-	node.prev = lru.tail.prev
-	node.next = lru.tail
-	lru.tail.prev.next = node
-	lru.tail.prev = node
+	return false
 }
