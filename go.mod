@@ -1,3 +1,3 @@
-module algorithms_go
+module algorithms-go
 
 go 1.18
